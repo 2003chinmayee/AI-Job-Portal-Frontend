@@ -102,17 +102,7 @@ function Login() {
           </Link>
         </p>
 
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm font-semibold text-gray-600 mb-2">
-            Demo Accounts:
-          </p>
-          <p className="text-xs text-gray-500">
-            Candidate: chinmayee@gmail.com / 123456
-          </p>
-          <p className="text-xs text-gray-500">
-            Recruiter: recruiter@tcs.com / password123
-          </p>
-        </div>
+        
       </div>
     </div>
   );
