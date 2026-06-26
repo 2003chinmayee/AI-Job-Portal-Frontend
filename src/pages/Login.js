@@ -27,7 +27,11 @@ function Login() {
       localStorage.setItem("userName", response.data.name);
       localStorage.setItem("role", response.data.role);
 
-      navigate("/jobs");
+      if (response.data.role === "RECRUITER") {
+        navigate("/recruiter-dashboard");
+      } else {
+        navigate("/jobs");
+      }
     } catch (err) {
       setError("Invalid email or password!");
     }
