@@ -125,7 +125,7 @@ export default function CandidateNavbar() {
   /* unread notifications */
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:8080/api/notifications/unread-count", {
+    fetch(`${process.env.REACT_APP_API_URL}/notifications/unread-count`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
