@@ -2,6 +2,27 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
 
+// ✅ InputField OUTSIDE Register function — fixes focus loss bug
+const InputField = ({ label, name, value, onChange, error, placeholder, type = 'text' }) => (
+  <div className="mb-4">
+    <label className="block text-gray-700 font-medium mb-1.5 text-sm">{label}</label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={`w-full border rounded-lg px-4 py-3 focus:outline-none transition-colors text-sm
+        ${error ? 'border-red-400 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:border-indigo-500'}`}
+    />
+    {error && (
+      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+        <span>⚠️</span> {error}
+      </p>
+    )}
+  </div>
+);
+
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -13,7 +34,6 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // ─── Per-field validation ─────────────────────────────────────────
   const validate = (name, value) => {
     switch (name) {
       case 'name':
@@ -46,7 +66,6 @@ function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Only allow digits for phone
     if (name === 'phone') {
       const digits = value.replace(/\D/g, '').slice(0, 10);
       setFormData(prev => ({ ...prev, phone: digits }));
@@ -79,7 +98,6 @@ function Register() {
     setLoading(false);
   };
 
-  // ─── Password strength indicator ──────────────────────────────────
   const getStrength = (pwd) => {
     let score = 0;
     if (pwd.length >= 8) score++;
@@ -93,37 +111,15 @@ function Register() {
   const strengthLabel = ['', 'Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'][strength];
   const strengthColor = ['', '#ef4444', '#f97316', '#eab308', '#22c55e', '#16a34a'][strength];
 
-  const InputField = ({ label, name, type = 'text', placeholder }) => (
-    <div className="mb-4">
-      <label className="block text-gray-700 font-medium mb-1.5 text-sm">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={formData[name]}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className={`w-full border rounded-lg px-4 py-3 focus:outline-none transition-colors text-sm
-          ${errors[name] ? 'border-red-400 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:border-indigo-500'}`}
-      />
-      {errors[name] && (
-        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-          <span>⚠️</span> {errors[name]}
-        </p>
-      )}
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-8 px-4">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
 
-        {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-indigo-600">AI Job Portal</h1>
           <p className="text-gray-500 mt-1 text-sm">Create your account</p>
         </div>
 
-        {/* Server error */}
         {serverError && (
           <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg mb-4 text-sm flex items-center gap-2">
             <span>❌</span> {serverError}
@@ -133,10 +129,25 @@ function Register() {
         <form onSubmit={handleSubmit} noValidate>
 
           {/* Full Name */}
-          <InputField label="Full Name" name="name" placeholder="e.g. Chinmayee Patil" />
+          <InputField
+            label="Full Name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+            placeholder="e.g. Chinmayee Patil"
+          />
 
           {/* Email */}
-          <InputField label="Email" name="email" type="email" placeholder="you@example.com" />
+          <InputField
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            placeholder="you@example.com"
+          />
 
           {/* Password */}
           <div className="mb-4">
@@ -156,7 +167,6 @@ function Register() {
                 {showPassword ? '🙈' : '👁️'}
               </button>
             </div>
-            {/* Strength bar */}
             {formData.password && (
               <div className="mt-2">
                 <div className="flex gap-1 mb-1">
@@ -207,7 +217,14 @@ function Register() {
           </div>
 
           {/* Location */}
-          <InputField label="Location" name="location" placeholder="e.g. Pune, Maharashtra" />
+          <InputField
+            label="Location"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            error={errors.location}
+            placeholder="e.g. Pune, Maharashtra"
+          />
 
           <button type="submit" disabled={loading}
             className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-200 mt-2 disabled:opacity-60">
